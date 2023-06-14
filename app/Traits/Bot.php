@@ -4,24 +4,29 @@
 namespace App\Traits;
 
 
-trait Bot
+use http\Env;
+
+class Bot
 {
     use HttpRequest;
-    private string $apiUrl = "https://api.telegram.org/bot%s/%s";
-    public function __construct(
+    private string $sUrlFormat = "https://api.telegram.org/bot%s/%s";
+    public function __construct(){}
 
-    )
-    {}
-
-    private function api(...$params)
+    private function api(string $method, mixed $data,array $params=null)
     {
+        $url = sprintf($this->sUrlFormat, env('TELEGRAM_BOT_TOKEN'), $method);
+        $params = !is_null($params) ? $params : [
+            'chat_id' => env('TELEGRAM_BOT_ID'),
+            'text'    => '<h1>Hello world</h1>',
+            'parse_mode' => 'html'
+        ];
         $aResult = $this->request($this->apiUrl, $params, []);
         var_dump($aResult);
     }
 
-    public final function send()
+    public final function sendMessage()
     {
-        $sMethod = "send";
+        $this->api('sendMessage');
 
     }
 
